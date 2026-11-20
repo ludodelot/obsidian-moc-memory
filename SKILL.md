@@ -8,7 +8,7 @@ description: >
   or wants persistent memory across sessions. Not for one-off questions that need no stored memory.
 license: MIT
 metadata:
-  version: "0.1.0"
+  version: "0.2.0"
   author: ludodelot
   keywords: obsidian, second-brain, moc, map-of-content, pkm, agent-memory, claude-code, markdown
 ---
@@ -43,15 +43,19 @@ Run `python3 scripts/infer_structure.py <vault>` and read the JSON. Then intervi
 Summarise what you inferred (naming, folders, frontmatter, link style) and ask for confirmation.
 If the vault is empty, propose the starter layout in `references/starter-layout.md` and adapt it to their answers.
 
+If the vault is empty, scaffold it: `python3 scripts/init_vault.py <vault> [--lang es]`.
+
 ### 2. Load the index
 If `_INDEX.md` exists, read it first (one line per note). If missing or stale, run `python3 scripts/build_index.py <vault>`.
 For any topic, open the matching MOC from the index, then only the notes it links.
 
 ### 3. Capture ("remember this", "note this")
 1. Search the index and MOCs for an existing note on the subject.
-2. If found, update it (append under a dated line, fix stale facts). If not, create from `templates/note.md`, following the user's naming style.
-3. Set frontmatter (`type`, `description`, `created`, `tags`). Types: `user`, `feedback`, `project`, `reference`, `moc`, `log`.
-4. Add the note to at least one MOC. Create a MOC from `templates/moc.md` only when 5+ related notes exist with no hub.
+2. If found, update it (append under a dated line, fix stale facts). If not, create it with
+   `python3 scripts/new_note.py <vault> "Title" --type feedback --description "..." --folder 04_Memory --moc MOC-Memory`.
+   The script refuses duplicates and near-duplicate titles (exit 1): update the existing note instead.
+3. Follow the user's naming style from onboarding. Set frontmatter (`type`, `description`, `created`, `tags`). Types: `user`, `feedback`, `project`, `reference`, `moc`, `log`.
+4. Add the note to at least one MOC (`--moc` does it). Create a MOC from `templates/moc.md` only when `suggest_mocs.py` reports a theme with 5+ uncovered notes.
 5. Rebuild the index.
 
 ### 4. Retrieve
@@ -59,12 +63,13 @@ Read the MOC, follow links, quote or summarise with the note path as provenance.
 
 ### 5. Review and prune (weekly or on request)
 1. `python3 scripts/vault_lint.py <vault>`: broken links, orphans, missing frontmatter, duplicate titles.
+   Also `find_duplicates.py` (similar titles or content), `suggest_mocs.py` (uncovered themes), `stale_report.py --days 90` (old project and log notes).
 2. Walk `templates/review-checklist.md` with the user: merge duplicates, mark stale facts, archive finished projects.
 3. Apply fixes only after confirmation. Prefer archive over delete.
 4. Rebuild the index. Target: zero lint errors.
 
 ### 6. Migration (only on request)
-Propose renames as a table (old, new, reason). Apply with Obsidian CLI or git `mv` so links update. Commit or back up first.
+Propose renames as a table (old, new, reason). Use `python3 scripts/safe_rename.py <vault> "Old" "New"` (dry run), show the result, and re-run with `--apply` only after the user confirms. It rewrites every `[[wikilink]]`, keeping `#heading` and `|alias`. Commit or back up first.
 
 ## Memory note types
 

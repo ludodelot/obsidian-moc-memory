@@ -7,7 +7,7 @@ import json, re, sys
 from collections import Counter
 from pathlib import Path
 
-SKIP = {".git", ".obsidian", ".trash", "node_modules"}
+SKIP = {".git", ".obsidian", ".trash", "node_modules", "_Templates", "_Plantillas", "Templates"}
 NAMING = {
     "date-prefix (YYYY-MM-DD)": re.compile(r"^\d{4}-\d{2}-\d{2}"),
     "numeric-prefix (Johnny.Decimal/ordered)": re.compile(r"^\d{1,3}[ _.-]"),

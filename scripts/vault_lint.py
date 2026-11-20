@@ -11,7 +11,7 @@ from pathlib import Path
 WIKILINK = re.compile(r"\[\[([^\]\|#]+)(?:#[^\]\|]*)?(?:\|[^\]]*)?\]\]")
 CODE = re.compile(r"```.*?```|`[^`\n]*`", re.S)
 DEFAULT_TYPES = {"user", "feedback", "project", "reference", "moc", "log", "note"}
-SKIP_DIRS = {".git", ".obsidian", ".trash", "node_modules", "_Archive"}
+SKIP_DIRS = {".git", ".obsidian", ".trash", "node_modules", "_Archive", "_Templates", "_Plantillas", "Templates"}
 
 
 def parse_frontmatter(text):

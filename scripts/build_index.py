@@ -6,7 +6,7 @@ Usage: python3 build_index.py VAULT [--max-bytes 25000]. Standard library only.
 import argparse, re
 from pathlib import Path
 
-SKIP = {".git", ".obsidian", ".trash", "node_modules", "_Archive"}
+SKIP = {".git", ".obsidian", ".trash", "node_modules", "_Archive", "_Templates", "_Plantillas", "Templates"}
 
 
 def fm_of(text):

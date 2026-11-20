@@ -11,6 +11,7 @@
 [![Python 3](https://img.shields.io/badge/python-3.9%2B-3776AB?logo=python&logoColor=white)](scripts)
 [![Obsidian](https://img.shields.io/badge/Obsidian-compatible-7C3AED?logo=obsidian&logoColor=white)](https://obsidian.md)
 [![Zero dependencies](https://img.shields.io/badge/dependencies-0-brightgreen)](scripts)
+[![CI](https://github.com/ludodelot/obsidian-moc-memory/actions/workflows/ci.yml/badge.svg)](https://github.com/ludodelot/obsidian-moc-memory/actions)
 [![Local only](https://img.shields.io/badge/privacy-local%20only-success)](#privacy)
 
 [Install](#install) · [How it works](#how-it-works) · [Quick start](#quick-start) · [Scripts](#scripts) · [FAQ](#faq)
@@ -33,18 +34,13 @@ AI agents forget everything between sessions. **Obsidian MOC Memory** is an [Age
 
 ## How it works
 
-```mermaid
-flowchart LR
-    A[Existing or empty vault] --> B[infer_structure.py<br/>learn user conventions]
-    B --> C[Short interview<br/>confirm style]
-    C --> D[_INDEX.md<br/>one line per note]
-    D --> E{Task}
-    E -->|remember| F[Search, then update<br/>or create note + MOC link]
-    E -->|recall| G[Read MOC, follow links,<br/>cite note path]
-    E -->|review| H[vault_lint.py<br/>fix, merge, archive]
-    F --> D
-    H --> D
-```
+An agent that has to search the whole vault reads dozens of irrelevant notes. With MOC memory it reads the index, opens the right hub, and follows two links.
+
+<img src="assets/moc-vs-scan.svg" alt="Without MOCs the agent greps the whole vault and reads many notes. With MOC memory it reads the index, opens one MOC and two linked notes, then answers citing the note path." width="100%">
+
+Capturing is just as controlled: the agent searches before it writes, and a near-identical title blocks creation, so memory stays one fact per note.
+
+<img src="assets/capture-flow.svg" alt="Remember X: search the index; if the note exists update it, otherwise new_note.py creates it with frontmatter, links it from a MOC, then build_index.py rebuilds the index." width="100%">
 
 ## Install
 
@@ -62,7 +58,7 @@ Other agents: copy the folder to wherever your agent loads skills, or reference 
 2. It scans your vault, summarises what it found and asks a few questions.
 3. Then just talk: *"Remember that I prefer short answers."* · *"What do my notes say about the website project?"* · *"Run my weekly vault review."*
 
-Try the scripts on the bundled example vault:
+Try the scripts on the bundled example vault (tests: `python3 -m unittest discover -s tests`):
 
 ```bash
 python3 scripts/vault_lint.py examples/sample-vault
@@ -90,6 +86,12 @@ Python 3, standard library only.
 | [`infer_structure.py`](scripts/infer_structure.py) | Detects folders, naming patterns, frontmatter keys, link style and MOCs |
 | [`vault_lint.py`](scripts/vault_lint.py) | Broken wikilinks, orphan notes, missing frontmatter, duplicate titles. Exit 1 on errors |
 | [`build_index.py`](scripts/build_index.py) | Builds `_INDEX.md`, MOCs first, under a size budget |
+| [`init_vault.py`](scripts/init_vault.py) | Scaffolds a starter vault (EN or ES), lint-clean from minute one |
+| [`new_note.py`](scripts/new_note.py) | Creates a note with frontmatter, blocks duplicates, links it from a MOC |
+| [`find_duplicates.py`](scripts/find_duplicates.py) | Similar titles and overlapping content |
+| [`suggest_mocs.py`](scripts/suggest_mocs.py) | Themes with 5+ notes that no MOC covers yet |
+| [`safe_rename.py`](scripts/safe_rename.py) | Renames a note and rewrites every wikilink, dry run first |
+| [`stale_report.py`](scripts/stale_report.py) | Old project and log notes to review |
 
 ## Repository layout
 
@@ -99,6 +101,7 @@ scripts/        deterministic checks
 templates/      note, MOC, review checklist
 references/     PKM methods, starter layout, failure modes
 evals/          test cases
+tests/          unit tests (stdlib unittest)
 examples/       fake sample vault
 assets/         banner and social preview
 ```

@@ -1,6 +1,6 @@
 {
   "name": "obsidian-moc-memory",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Agent Skill: build and maintain an Obsidian second brain with Maps of Content as persistent memory for Claude Code and other AI agents.",
   "author": { "name": "Ludovic Delot", "url": "https://github.com/ludodelot" },
   "license": "MIT",
